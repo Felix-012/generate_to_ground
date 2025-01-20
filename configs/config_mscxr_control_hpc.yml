@@ -1,0 +1,46 @@
+latent_attention_masks: False # remnant from legacy code
+root: $WORK
+work_dir: $WORK/cxr_phrase_grounding
+data_dir: $WORK/data/mimic
+component_dir: $WORK/cxr_phrase_grounding/components
+log_dir: $WORK/cxr_phrase_grounding/log
+
+
+dataloading:
+  batch_size: 32
+  num_workers: 0
+
+datasets:
+  C: 4
+  H: 512
+  W: 512
+  f: 8
+
+  train:
+    dataset: chestxraymimic
+    base_dir: $WORK/data/mimic
+    precomputed_base_dir: $WORK/data/mimic
+    split: train
+    preload: true
+    shuffle: true
+    save_original_images: false
+    dataset_csv: mimic_metadata_preprocessed.csv
+    num_chunks: 4
+    chunk_path: $TMPDIR/training_data_chunked_control
+
+
+  test:
+    dataset: chestxraymimicbbox
+    base_dir: $WORK/data/mimic
+    split: mscxr
+    preload: true
+    save_original_images: true
+
+sample:
+  ddim_steps: 75
+  iou_batch_size: 8
+  n_synth_samples_per_class: 625
+  seed: 4200
+  latent_C: 4
+  latent_H: 64
+  latent_W: 64

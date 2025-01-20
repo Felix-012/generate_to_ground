@@ -1,0 +1,56 @@
+work_dir: ${CXR_PG_DIR} # location of the repository
+component_dir: ${CXR_PG_DIR}/components # directory of the models if not loaded via huggingface
+log_dir: ${CXR_PG_DIR}/log # logging directory
+
+
+dataloading:
+  batch_size: 8
+  num_workers: 0
+
+datasets:
+  C: 4
+  H: 512
+  W: 512
+  f: 8
+
+  train:
+    dataset: chestxraymimic
+    base_dir: ${MIMIC_JPG}/files/mimic-cxr-jpg/2.0.0 # this should point to your training data directory
+    precomputed_base_dir: ${WORK}/data/mimic # this should point to the directory where you store your precomputed images
+    split: train
+    preload: true
+    shuffle: true
+    save_original_images: false
+    dataset_csv: ${WORK}/data/mimic/mimic/mimic_metadata_preprocessed.csv # this csv file specifies the impressions and file paths to use
+    num_chunks: 1
+    chunk_path: ${WORK}/data/mimic/training_data_chunked #only needed if more than one chunk is used
+
+  validation:
+    dataset: chestxray14bbox
+    dataset_csv: ${WORK}/data/mimic/data/xray14/BBox_List_2017.csv
+
+  test:
+    dataset: chestxraymimicbbox
+    base_dir: ${MIMIC_JPG}/files/mimic-cxr-jpg/2.0.0 # directory where the mimic images are located
+    precomputed_base_dir: ${WORK}/data/mimic/ # directory where the precomputed images should be located
+    split: mscxr
+    preload: true
+    dataset_csv: mimi_scxr_phrase_grounding_preprocessed.csv # csv specifying impressions, image paths and bounding boxes
+    phrase_grounding: True
+    save_original_images: True
+
+sample:
+  ddim_steps: 75
+  iou_batch_size: 8
+  n_synth_samples_per_class: 625
+  seed: 4200
+  latent_C: 4
+  latent_H: 64
+  latent_W: 64
+
+cx14_images_path: ${CX14}/images # image path to optimization dataset
+latent_attention_masks: False # remnant from legacy code
+data_dir: ${WORK}/data/mimic # only needed for medkebert processing
+checkpoint: # only needed if a LoRA checkpoint is used
+load_lightning: False
+

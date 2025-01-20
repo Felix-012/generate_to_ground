@@ -1,0 +1,15 @@
+#!/bin/bash -l
+
+cd "${CXR_PR}" || exit
+export PYTHONPATH=$PWD
+
+python "${CXR_PR}"/evaluation/compute_bbox.py  \
+--config="${CXR_PR}"/configs/config_msxcr.yml \
+--mask_dir="/vol/ideadata/ce90tate/preliminary_masks/normal/biovil/" \
+--path=runwayml/stable-diffusion-v1-5 \
+--phrase_grounding_mode \
+--use_ema \
+--checkpoint="${CXR_PR}"/finetune/normal/biovil/checkpoint-30000 \
+--sample_mode \
+--use_attention_mask \
+--custom_path=microsoft/BiomedVLP-CXR-BERT-specialized \

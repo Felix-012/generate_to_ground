@@ -1,0 +1,27 @@
+#!/bin/bash
+accelerate launch --config_file $CXR_PR/configs/accelerate_config.yaml $CXR_PR/training/train.py \
+--pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5 \
+--gradient_accumulation_steps=2 \
+--max_train_steps=30001 \
+--learning_rate=5e-05 \
+--max_grad_norm=1 \
+--lr_scheduler="cosine" \
+--output_dir=$CXR_PR/finetune/normal/biovil \
+--report_to=wandb \
+--checkpointing_steps=10000 \
+--validation_epochs=100 \
+--seed=4200 \
+--config=$CXR_PR/configs/config_msxcr_hpc.yml \
+--validation_prompt="Pleural effusion in the lower right chest." \
+--generation_validation_epochs=1000 \
+--train_batch_size=16 \
+--resume_from_checkpoint=latest \
+--lr_warmup_steps=1000 \
+--use_ema \
+--ucg_probability=0.3 \
+--mixed_precision=fp16 \
+--use_attention_mask \
+--custom_path=microsoft/BiomedVLP-CXR-BERT-specialized \
+--use_ddim \
+--force_download \
+--trust_remote_code
