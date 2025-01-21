@@ -44,7 +44,8 @@ class MimicCXRDataset(FOBADataset):
         self.chunk_size = None
         self.num_chunks = dataset_args.get("num_chunks")
         self.current_chunk_index = -1
-        self.chunk_path = os.path.expandvars(dataset_args.get("chunk_path"))
+        if dataset_args.get("chunk_path"):
+            self.chunk_path = os.path.expandvars(dataset_args.get("chunk_path"))
         self.limit_dataset = dataset_args.get("limit_dataset")
         self.chunk_load_counter = 0
         if self.num_chunks:
