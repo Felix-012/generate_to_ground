@@ -1,6 +1,7 @@
 # Reproducing Paper Results
 
 Follow the steps below to reproduce the results presented in our paper.
+Weights can be downloaded from our [Hugging Face Repository](https://huggingface.co/FelixNuetzel/cxr_bert_ldm/).
 
 ---
 
@@ -48,7 +49,7 @@ The checkpoint will be automatically loaded when running the standard evaluation
 
 Before running evaluation scripts:
 
-1. Set the `CXR_PR` environment variable to the path of your repository.
+1. Set the `CXR_PG` environment variable to the path of your repository.
 2. Set the `WORK` environment variable to the path of your parent repository or change the path in config.
 3. Activate the Conda environment:
 
@@ -116,7 +117,7 @@ cxr_phrase_grounding/finetune/
 
 ---
 
-## 6. Evaluation
+### Evaluation
 
 The evaluation script is located at:
 
@@ -132,7 +133,7 @@ cxr_phrase_grounding/evaluation/utils_evaluation.py
 
 ---
 
-## 7. Datasets
+### Datasets
 
 All dataset-related code is available in:
 
@@ -156,7 +157,7 @@ Paths can be adjusted in the config files.
 
 ---
 
-## 8. Configuration
+### Configuration
 
 Configuration files are located in:
 
