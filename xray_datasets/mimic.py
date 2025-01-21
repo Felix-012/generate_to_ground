@@ -397,7 +397,7 @@ class MimicCXRDatasetMSBBOX(MimicCXRDataset):
         """
         :return: The dicom_ids of the dataset.
         """
-        return pd.read_csv(os.path.join(self.base_dir, self._csv_name), index_col="dicom_id")
+        return pd.read_csv(os.path.expandvars(os.path.join(self.base_dir, self._csv_name)), index_col="dicom_id")
 
     def _build_dataset(self):
         """
