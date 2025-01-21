@@ -26,7 +26,7 @@ class ChestXRay14BboxDataset(Dataset):
         """
         super().__init__()
         self.bbox_csv = pd.read_csv(dataset_args.dataset_csv)
-        self.images_path = opt.cx14_images_path
+        self.images_path = os.path.expandvars(opt.cx14_images_path)
         self.data = {"img": [], "bbox_img": [], "bboxxywh": [], "label_text": [], "rel_path": []}
 
     def process_samples(self, vae):
