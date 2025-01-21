@@ -8,7 +8,7 @@ from pathlib import PurePath, Path
 import numpy as np
 import torch
 from PIL import Image, ImageDraw
-from diffusers import EMAModel, UNet2DConditionModel, ControlNetModel
+from diffusers import UNet2DConditionModel, ControlNetModel
 from matplotlib import pyplot as plt
 from torchvision.transforms.v2 import Resize, Compose, CenterCrop
 
@@ -248,15 +248,15 @@ def prepare_evaluation(config, args, mapper, lora_weights, trust_remote_code=Fal
         lora_weights = os.path.join(lora_weights, checkpoint)
         pipeline.load_lora_weights(lora_weights)
     elif args.use_ema and args.checkpoint is not None:
-        ema_unet = EMAModel(pipeline.unet.parameters(), model_cls=UNet2DConditionModel,
-                            model_config=pipeline.unet.config)
-        ema_unet.to("cuda")
-        load_model = EMAModel.from_pretrained(os.path.join(args.checkpoint, "unet_ema"), UNet2DConditionModel)
-        ema_unet.load_state_dict(load_model.state_dict())
-        del load_model
-        ema_unet.copy_to(pipeline.unet.parameters())
+        try:
+            pipeline.unet = UNet2DConditionModel.from_pretrained(os.path.join(args.checkpoint, "unet_ema"))
+        except OSError:
+            pipeline.unet = UNet2DConditionModel.from_pretrained(args.checkpoint, subfolder="unet_ema")
     elif args.checkpoint is not None and not config.load_lightning:
-        pipeline.unet = UNet2DConditionModel.from_pretrained(os.path.join(args.checkpoint, "unet"))
+        try:
+            pipeline.unet = UNet2DConditionModel.from_pretrained(os.path.join(args.checkpoint, "unet"))
+        except OSError:
+            pipeline.unet = UNet2DConditionModel.from_pretrained(args.checkpoint, subfolder="unet")
     elif config.load_lightning:
         loaded_state_dict = torch.load(args.checkpoint)["state_dict"]
         prefix = "model.diffusion_model."
