@@ -173,7 +173,7 @@ configuration = load_config(args.config)
 
 dataset = get_dataset(configuration, args.split)
 model, mask_dir = prepare_evaluation(config=configuration, args=args, rank=3, trust_remote_code=True,
-                                     lora_weights=None, mapper=None)
+                                     lora_weights=None)
 device = torch.device(3) if torch.cuda.is_available() else torch.device("cpu")
 model = model.to(device)
 model.set_progress_bar_config(position=0)

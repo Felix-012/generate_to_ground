@@ -207,14 +207,13 @@ def get_args_compute_bbox():
     return parser.parse_args()
 
 
-def prepare_evaluation(config, args, mapper, lora_weights, trust_remote_code=False, use_ddim=True, rank=0):
+def prepare_evaluation(config, args, lora_weights, trust_remote_code=False, use_ddim=True, rank=0):
     """
     Prepares the evaluation pipeline with specified configurations and models.
     :param use_ddim: If the DDIM scheduler should be used instead of the DDPM scheduler.
     :param trust_remote_code: True if code from the specified remote repository should be executed.
     :param config: Configuration settings.
     :param args: Command-line arguments specifying various options.
-    :param mapper: Mapping of model state keys.
     :param lora_weights: Path to lora model weights.
     :param rank: Device rank, used for model parallelism.
     :return: Tuple of the initialized pipeline and mask directory.
@@ -252,25 +251,11 @@ def prepare_evaluation(config, args, mapper, lora_weights, trust_remote_code=Fal
             pipeline.unet = UNet2DConditionModel.from_pretrained(os.path.join(args.checkpoint, "unet_ema"))
         except OSError:
             pipeline.unet = UNet2DConditionModel.from_pretrained(args.checkpoint, subfolder="unet_ema")
-    elif args.checkpoint is not None and not config.load_lightning:
+    elif args.checkpoint is not None:
         try:
             pipeline.unet = UNet2DConditionModel.from_pretrained(os.path.join(args.checkpoint, "unet"))
         except OSError:
             pipeline.unet = UNet2DConditionModel.from_pretrained(args.checkpoint, subfolder="unet")
-    elif config.load_lightning:
-        loaded_state_dict = torch.load(args.checkpoint)["state_dict"]
-        prefix = "model.diffusion_model."
-        filtered_dict = {}
-        for key in loaded_state_dict:
-            if key.startswith(prefix):
-                # Remove the prefix and add the remaining part of the key to the new dictionary
-                new_key = key[len(prefix):]
-                filtered_dict[new_key] = loaded_state_dict[key]
-
-        state_dict = {}
-        for old_key, new_key in mapper.items():
-            state_dict[new_key] = filtered_dict[old_key]
-        pipeline.unet.load_state_dict(state_dict, strict=True)
 
     if args.checkpoint is not None and os.path.isdir(os.path.join(args.checkpoint, "text_encoder")):
         pipeline.text_encoder = (type(pipeline.text_encoder).

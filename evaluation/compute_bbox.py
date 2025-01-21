@@ -34,7 +34,6 @@ from log import logger
 from util_scripts.attention_maps import temporary_cross_attention
 from util_scripts.foreground_masks import GMMMaskSuggestor
 from util_scripts.preliminary_masks import preprocess_attention_maps
-from util_scripts.state_dict_mapper import get_component_mapper
 from util_scripts.utils_generic import collate_batch, normalize_and_scale_tensor
 from util_scripts.utils_train import tokenize_captions
 from utils_evaluation import get_args_compute_bbox, prepare_evaluation
@@ -46,13 +45,12 @@ from xray_datasets.utils import load_config
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
-def compute_masks(rank, configuration, mapper, world_size, args):
+def compute_masks(rank, configuration, world_size, args):
     """
     Computes the attention masks for the loaded model, as specified in https://arxiv.org/abs/2212.14306.
 
     :param rank: Device rank of the current process.
     :param configuration: Config file used for more persistent settings.
-    :param mapper: Maps between pytorch lightning and diffusers state dicts, only needed for reproduction purposes.
     :param world_size: Number of processes.
     :param args: Additional arguments, see get_args_compute_bbox() for more details.
     :return:
@@ -62,7 +60,7 @@ def compute_masks(rank, configuration, mapper, world_size, args):
     lora_weights = args.lora_weights
     dataset = get_dataset(configuration, args.split)
     model, mask_dir = prepare_evaluation(config=configuration, args=args, lora_weights=lora_weights, rank=rank,
-                                         mapper=mapper, trust_remote_code=True)
+                                         trust_remote_code=True)
     device = torch.device(rank) if torch.cuda.is_available() else torch.device("cpu")
     model = model.to(device)
     model.set_progress_bar_config(position=rank)
@@ -286,12 +284,11 @@ def compute_masks(rank, configuration, mapper, world_size, args):
 
 
 
-def compute_iou_score(configuration, mapper, args):
+def compute_iou_score(configuration, args):
     """
     Computes the metrics such as iou, cnr, top1, or aucroc for the generates attention masks and stores them in csv
     files.
 
-    :param mapper: Maps between pytorch lightning and diffusers state dicts, only needed for reproduction purposes.
     :param configuration: Config file for some persistent settings.
     :param args:  Additional arguments, see get_args_compute_bbox() for more details.
     :return:
@@ -310,7 +307,7 @@ def compute_iou_score(configuration, mapper, args):
     lora_weights = args.lora_weights
     dataset = get_dataset(configuration, args.split)
 
-    pipeline, mask_dir = prepare_evaluation(config=configuration, args=args, lora_weights=lora_weights, mapper=mapper,
+    pipeline, mask_dir = prepare_evaluation(config=configuration, args=args, lora_weights=lora_weights,
                                             trust_remote_code=True)
     if args.split != "validation":
         dataset.load_precomputed(pipeline.vae)
@@ -468,13 +465,10 @@ def compute_iou_score(configuration, mapper, args):
 if __name__ == '__main__':
     arguments = get_args_compute_bbox()
     config = load_config(arguments.config)
-    mapper_obj = None
-    if config.load_lightning:
-        mapper_obj = get_component_mapper()
     device_count = torch.cuda.device_count()
     mp.spawn(
         compute_masks,
-        args=(config, mapper_obj, device_count, arguments),
+        args=(config, device_count, arguments),
         nprocs=device_count
     )
-    compute_iou_score(config, mapper_obj, arguments)
+    compute_iou_score(config, arguments)
