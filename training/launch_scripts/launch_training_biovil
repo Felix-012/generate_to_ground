@@ -1,4 +1,8 @@
 #!/bin/bash
+
+cd "${CXR_PR}" || exit
+export PYTHONPATH=$PWD
+
 accelerate launch --config_file $CXR_PR/configs/accelerate_config.yaml $CXR_PR/training/train.py \
 --pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5 \
 --gradient_accumulation_steps=2 \
