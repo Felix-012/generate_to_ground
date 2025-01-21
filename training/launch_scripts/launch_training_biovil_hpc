@@ -15,7 +15,6 @@ accelerate launch --config_file $WORK/cxr_phrase_grounding/configs/accelerate_co
 --validation_prompt="Pleural effusion in the lower right chest." \
 --generation_validation_epochs=1000 \
 --train_batch_size=16 \
---resume_from_checkpoint=latest \
 --lr_warmup_steps=1000 \
 --use_ema \
 --ucg_probability=0.3 \
