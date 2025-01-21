@@ -74,13 +74,18 @@ To reproduce evaluation results:
 
 ### Training
 
-To reproduce the training process, run:
+---
+
+You will probably first need to review the accelerate configuration in 
+`./configs/accelerate_config.yaml`.
+
+Then, to reproduce the training process, run:
 
 ```bash
 ./training/launch_scripts/launch_training_biovil
 ```
 
----
+
 
 ## 5. Additional Overview
 

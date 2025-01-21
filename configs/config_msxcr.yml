@@ -1,6 +1,6 @@
-work_dir: ${CXR_PG_DIR} # location of the repository
-component_dir: ${CXR_PG_DIR}/components # directory of the models if not loaded via huggingface
-log_dir: ${CXR_PG_DIR}/log # logging directory
+work_dir: ${CXR_PG} # location of the repository
+component_dir: ${CXR_PG}/components # directory of the models if not loaded via huggingface
+log_dir: ${CXR_PG}/log # logging directory
 
 
 dataloading:

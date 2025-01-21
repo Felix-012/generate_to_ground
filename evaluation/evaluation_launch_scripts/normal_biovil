@@ -1,11 +1,11 @@
 #!/bin/bash -l
 
-cd "${CXR_PR}" || exit
+cd "${CXR_PG}" || exit
 export PYTHONPATH=$PWD
 
-python "${CXR_PR}"/evaluation/compute_bbox.py  \
---config="${CXR_PR}"/configs/config_msxcr.yml \
---mask_dir="${CXR_PR}/normal/biovil/" \
+python "${CXR_PG}"/evaluation/compute_bbox.py  \
+--config="${CXR_PG}"/configs/config_msxcr.yml \
+--mask_dir="${CXR_PG}/normal/biovil/" \
 --path=runwayml/stable-diffusion-v1-5 \
 --phrase_grounding_mode \
 --use_ema \

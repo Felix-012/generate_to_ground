@@ -1,21 +1,21 @@
 #!/bin/bash
 
-cd "${CXR_PR}" || exit
+cd "${CXR_PG}" || exit
 export PYTHONPATH=$PWD
 
-accelerate launch --config_file $CXR_PR/configs/accelerate_config.yaml $CXR_PR/training/train.py \
+accelerate launch --config_file $CXR_PG/configs/accelerate_config.yaml $CXR_PG/training/train.py \
 --pretrained_model_name_or_path=runwayml/stable-diffusion-v1-5 \
 --gradient_accumulation_steps=2 \
 --max_train_steps=30001 \
 --learning_rate=5e-05 \
 --max_grad_norm=1 \
 --lr_scheduler="cosine" \
---output_dir=$CXR_PR/finetune/normal/biovil \
+--output_dir=$CXR_PG/finetune/normal/biovil \
 --report_to=wandb \
 --checkpointing_steps=10000 \
 --validation_epochs=100 \
 --seed=4200 \
---config=$CXR_PR/configs/config_msxcr_hpc.yml \
+--config=$CXR_PG/configs/config_msxcr_hpc.yml \
 --validation_prompt="Pleural effusion in the lower right chest." \
 --generation_validation_epochs=1000 \
 --train_batch_size=16 \
