@@ -49,7 +49,8 @@ The checkpoint will be automatically loaded when running the standard evaluation
 Before running evaluation scripts:
 
 1. Set the `CXR_PR` environment variable to the path of your repository.
-2. Activate the Conda environment:
+2. Set the `WORK` environment variable to the path of your parent repository or change the path in config.
+3. Activate the Conda environment:
 
 ```bash
 conda activate cxr_phrase_grounding
@@ -85,6 +86,7 @@ Then, to reproduce the training process, run:
 ./training/launch_scripts/launch_training_biovil
 ```
 
+The checkpoints for training are saved and loaded in `./finetune/normal/biovil` by default.
 
 
 ## 5. Additional Overview
