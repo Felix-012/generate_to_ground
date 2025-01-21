@@ -34,8 +34,8 @@ class MimicCXRDataset(FOBADataset):
         self._meta_data = None
         self._csv_file = "mimic_metadata_preprocessed.csv"
         if dataset_args.get("dataset_csv") is not None:
-            self._csv_file = dataset_args.get("dataset_csv")
-        self.precomputed_base_dir = dataset_args.get("precomputed_base_dir")
+            self._csv_file = os.path.expandvars(dataset_args.get("dataset_csv"))
+        self.precomputed_base_dir = os.path.expandvars(dataset_args.get("precomputed_base_dir"))
         self._build_dataset()
         self.opt = opt
         self._precomputed_path = None
@@ -44,7 +44,7 @@ class MimicCXRDataset(FOBADataset):
         self.chunk_size = None
         self.num_chunks = dataset_args.get("num_chunks")
         self.current_chunk_index = -1
-        self.chunk_path = dataset_args.get("chunk_path")
+        self.chunk_path = os.path.expandvars(dataset_args.get("chunk_path"))
         self.limit_dataset = dataset_args.get("limit_dataset")
         self.chunk_load_counter = 0
         if self.num_chunks:
@@ -236,8 +236,8 @@ class MimicCXRDataset(FOBADataset):
         :return: Returns the meta_data contained in the csv_file of the dataset.
         """
         if self._meta_data is None:
-            logger.info(f"Loading image list from {self.meta_data_path}")
-            self._meta_data = pd.read_csv(self.meta_data_path, index_col="dicom_id")
+            logger.info(f"Loading image list from {os.path.expandvars(self.meta_data_path)}")
+            self._meta_data = pd.read_csv(os.path.expandvars(self.meta_data_path), index_col="dicom_id")
             return self._meta_data
 
         return self._meta_data
